@@ -1,7 +1,7 @@
 # GLSL
 
 vertex_shader = """
-#version 450
+#version 460
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 normal;
 layout (location = 2) in vec2 texCoords;
@@ -35,9 +35,62 @@ void main()
 }
 """
 
+toon_shader_Vertex = """
+#version 330 core
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 uv;
+ 
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat4 mvpMatrix;
+uniform vec3 eyePos;
+uniform float time;
+ 
+out vec3 fsNormal;
+out vec2 fsUV;
+ 
+void main()
+{
+    vec4 pos = mvpMatrix * vec4(position.xyz, 1);
+    fsNormal = vec3(modelMatrix * viewMatrix * vec4(normal, 0)).xyz;
+    fsUV = uv;
+    gl_Position = pos;
+}
+"""
+
+toon_shader_fragment = """
+	
+#version 330 core
+out vec4 FragColor;
+ 
+in vec3 fsNormal;
+in vec2 fsUV;
+ 
+uniform vec3 eyePos;
+uniform sampler2D mainTexture;
+uniform sampler2D rampTexture;
+ 
+void main()
+{
+    vec3 lightDir = normalize(vec3(0, 0, 1));
+ 
+    vec3 normal = normalize(fsNormal);
+ 
+    float nDotl = clamp(dot(normal, lightDir), 0, 1);
+ 
+    float ramp = texture(rampTexture, vec2(nDotl, 0.5)).r;
+ 
+    vec3 albedo = texture(mainTexture, fsUV).rgb;
+    vec3 diffuse = albedo * pow(ramp, 1.3);
+    FragColor = vec4(diffuse, 1.0f);
+}
+"""
+
 
 fragment_shader = """
-#version 450
+#version 460
 layout (location = 0) out vec4 fragColor;
 
 in vec3 outColor;
@@ -50,3 +103,4 @@ void main()
     fragColor = vec4(outColor, 1) * texture(tex, outTexCoords);
 }
 """
+

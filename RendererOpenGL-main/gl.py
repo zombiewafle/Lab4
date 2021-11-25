@@ -1,8 +1,12 @@
 import glm
 from OpenGL.GL import * 
 from OpenGL.GL.shaders import compileProgram, compileShader
+from OpenGL.GLU import *
 from pygame import image
 from numpy import array, float32
+import shaders
+
+
 
 import obj
 
@@ -146,6 +150,11 @@ class Renderer(object):
         # View Matrix
         self.camPosition = glm.vec3(0,0,0)
         self.camRotation = glm.vec3(0,0,0) # pitch, yaw, roll
+        gluLookAt(
+		0,1,20, # eyepoint
+		0,0,0, # center-of-view
+		0,1,0, # up-vector
+	)
 
         # Projection Matrix
         self.projectionMatrix = glm.perspective(glm.radians(60),            # FOV en radianes
@@ -170,19 +179,44 @@ class Renderer(object):
         return glm.inverse(camMatrix)
 
 
+    
+
     def wireframeMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
     def filledMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
+    def toonShader(self):
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
+        glEnable(GL_LINE_SMOOTH)
+
+        glEnable(GL_TEXTURE_1D)
+        #glBindTexture(GL_TEXTURE_1D, )
+
+    def psicoShader(self):
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+
 
     def setShaders(self, vertexShader, fragShader):
-        if vertexShader is not None and fragShader is not None:
+        
+        #try:
+        #    self.active_shader = compileProgram(
+        #        compileShader(vertexShader, GL_VERTEX_SHADER),
+        #        compileShader(fragShader, GL_FRAGMENT_SHADER), validate=False)
+
+        #except Exception as e:
+
+        #    print(str(e).encode('utf-8').decode('unicode_escape'))
+        #    raise SystemExit()
+            
+        if vertexShader is not None and fragShader is not None :
             self.active_shader = compileProgram( compileShader(vertexShader, GL_VERTEX_SHADER),
-                                                 compileShader(fragShader, GL_FRAGMENT_SHADER))
+                                                 compileShader(fragShader, GL_FRAGMENT_SHADER), validate = False) 
         else:
             self.active_shader = None
+        
 
 
     def render(self):
