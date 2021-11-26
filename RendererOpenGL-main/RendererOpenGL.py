@@ -12,9 +12,6 @@ height = 540
 
 deltaTime = 0.0
 
-act_shader = 0
-maxZoom = 3
-actualZoom = 0
 
 
 pygame.init()
@@ -29,7 +26,15 @@ face.position.z = -5
 
 rend.scene.append( face )
 
-camPos = Vector2(rend.camPosition[0],rend.camPosition[2])
+camOrientation = Vector2(rend.camPosition[0],rend.camPosition[2])
+angle = 0
+
+act_shader = 0
+maxZoom = 3
+actualZoom = 0
+
+pygame.mixer_music.load('soundtrack.wav')
+pygame.mixer.music.play(-1)
 
 eyeX = rend.camPosition.x 
 eyeY = rend.camPosition.y 
@@ -45,11 +50,19 @@ while isRunning:
     # Traslacion de camara
     if keys[K_d]:
         rend.camPosition.x += 1 * deltaTime
-        #eyeX += step * deltaTime
+        #rend.camRotation.y += 25* deltaTime
+        #angle -= 25 * deltaTime
+        #newPos = camOrientation.rotate(angle)
+        #rend.camPosition.x = newPos[0]
+        #rend.camPosition.z = newPos[1]
 
     if keys[K_a]:
         rend.camPosition.x -= 1 * deltaTime
-        #eyeX -= step * deltaTime
+        #rend.camRotation.y -= 25* deltaTime
+        #angle += 25 * deltaTime
+        #newPos = camOrientation.rotate(angle)
+        #rend.camPosition.x = newPos[0]
+        #rend.camPosition.z = newPos[1]
 
     if keys[K_w]:
         rend.camPosition.z += 1 * deltaTime

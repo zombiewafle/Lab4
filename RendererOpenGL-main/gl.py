@@ -179,23 +179,11 @@ class Renderer(object):
         return glm.inverse(camMatrix)
 
 
-    
-
     def wireframeMode(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 
+
     def filledMode(self):
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-
-    def toonShader(self):
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-        glHint(GL_LINE_SMOOTH_HINT, GL_NICEST)
-        glEnable(GL_LINE_SMOOTH)
-
-        glEnable(GL_TEXTURE_1D)
-        #glBindTexture(GL_TEXTURE_1D, )
-
-    def psicoShader(self):
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 
 
@@ -213,10 +201,12 @@ class Renderer(object):
             
         if vertexShader is not None and fragShader is not None :
             self.active_shader = compileProgram( compileShader(vertexShader, GL_VERTEX_SHADER),
-                                                 compileShader(fragShader, GL_FRAGMENT_SHADER), validate = False) 
+                                                 compileShader(fragShader, GL_FRAGMENT_SHADER)) 
         else:
             self.active_shader = None
-        
+    
+
+    #def
 
 
     def render(self):
